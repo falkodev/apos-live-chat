@@ -1,0 +1,93 @@
+$color-white: #fff;
+$color-purple: #5357c1;
+$color-purple-transparent: #5357c145;
+$color-purple-rgb: rgba(83, 87, 193, 0.9);
+$color-purple-alpha-20: rgba(83, 87, 193, 0.2);
+$color-purple-alpha-30: rgba(83, 87, 193, 0.3);
+$color-purple-light: #8264f1;
+$color-purple-logo: #d4d7fb;
+$color-purple-dark: #eb443b30;
+$color-pink: #fe5599;
+$color-green: #0c8;
+$color-green-10: #b9d686;
+$color-green-50: #8bb426;
+$color-green-transparent: #4d750945;
+$color-green-100: #00bf9a30;
+$color-gold: #f7b500;
+$color-orange: #ff8317;
+$color-black: #000000;
+$color-grey-20: #f2f2f2;
+$color-grey-30: #00000029;
+$color-grey-50: #36414d;
+$color-grey-60: #323232;
+$color-grey-70: #707070;
+$color-grey-40: #9ca7b3;
+$color-red: #ec0808;
+$color-red-light: #f76161;
+$color-green-region: #8bb426;
+
+$color-main: $color-green-region;
+$color-main-transparent: $color-green-transparent;
+$color-secondary: $color-white;
+$color-text: $color-black;
+$color-background: $color-white;
+$color-header: $color-white;
+$color-navbar: $color-white;
+
+$header-height: 102px;
+$admin-height: 112px;
+$header-height: 102px;
+$footer-height: 80px;
+
+$breakpoints: (
+  xs: 360px,
+  sm: 768px,
+  md: 1025px,
+);
+
+.t-popup {
+  border-style: solid;
+  background-color: $color-secondary;
+  border-radius: 16px;
+  box-shadow: 10px 5px 5px $color-grey-60;
+  z-index: 2001;
+  transition: 0.5s opacity ease, transform 0.5s ease;
+  transform: translateY(24px);
+  position: fixed;
+  bottom: 40px;
+  right: 20px;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  max-width: 50%;
+  top: 50%;
+
+  &__message {
+    color: $color-main;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  &__buttons {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  &__button {
+    background-color: $color-main;
+    position: relative;
+    border: none;
+    border-radius: 7px;
+    padding: 12px 24px;
+    margin: 0 auto;
+    color: $color-white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+}
