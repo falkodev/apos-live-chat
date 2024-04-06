@@ -24,7 +24,7 @@
             @set-all-pieces-selection="setAllPiecesSelection" />
         </template>
         <template #bodyMain>
-          <AposDocsManagerDisplay v-if="items.length > 0" v-model:checked="checked" :items="items" :headers="headers"
+          <AposDocsManagerDisplay :key="refreshKey" v-if="items.length > 0" v-model:checked="checked" :items="items" :headers="headers"
             :options="{
     ...moduleOptions,
     disableUnchecked: maxReached(),
@@ -81,7 +81,8 @@ export default {
       allPiecesSelection: {
         isSelected: false,
         total: 0
-      }
+      },
+      refreshKey: 0
     };
   },
   computed: {
@@ -176,20 +177,24 @@ export default {
     socket.userID = 'adminID'
 
     socket.on("private message", ({ content, from, to }) => {
+      console.log('=================> private message <=================', content)
+
       setTimeout(() => {
         socket.emit("private message", {
           content: 'second private message',
           to: from,
           from: to
         });
+        this.refreshKey++;
+        console.log('this.refreshKey ====> ', this.refreshKey)
       }, 500)
-      setTimeout(() => {
-        socket.emit("private message", {
-          content: 'third private message',
-          to: from,
-          from: to
-        });
-      }, 1500)
+      // setTimeout(() => {
+      //   socket.emit("private message", {
+      //     content: 'third private message',
+      //     to: from,
+      //     from: to
+      //   });
+      // }, 1500)
     });
   },
   unmounted() {

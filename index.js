@@ -11,7 +11,8 @@ module.exports = {
   },
 
   options: {
-    // name: '@apostrophecms-pro/doc-template-library',
+    name: 'apos-live-chat',
+    localized: false,
     // label: 'aposTemplate:label',
     // pluralLabel: 'aposTemplate:pluralLabel',
     // quickCreate: false,
@@ -35,6 +36,40 @@ module.exports = {
     'forum-icon': 'Forum',
   },
 
+  fields: {
+    add: {
+      messages: {
+        type: 'array',
+        label: 'Messages',
+        fields: {
+          add: {
+            content: {
+              type: 'string',
+              label: 'Content',
+            },
+            sender: {
+              type: 'string',
+              label: 'Sender',
+            },
+            date: {
+              type: 'string',
+              label: 'Date',
+            },
+          },
+        }
+      },
+    }
+  },
+
+  columns: {
+    add: {
+      messagesCount: {
+        label: 'Messages',
+        component: 'ColumnMessagesCount',
+      }
+    }
+  },
+
   init (self) {
     self.config = {
       port: 3002,
@@ -53,8 +88,32 @@ module.exports = {
 
     const registered = new Set()
     const waitingList = {}
+    const req = self.apos.task.getReq()
     io.on('connection', (socket) => {
-      socket.on("private message", ({ content, from, to }) => {
+      socket.on("private message", async ({ content, from, to }) => {
+        console.log('=================> private message <=================', from, content)
+        const chats = await self.find(req, {}).toArray()
+        // console.log('chats', require('util').inspect(chats, { colors: true, depth: 1 }))
+        const condition = from === 'adminID' ? to : from
+        const existingChat = chats.find(chat => chat.from === condition)
+        const date = new Date().toISOString()
+        if (!existingChat) {
+          await self.insert(req, {
+            title: date,
+            slug: self.apos.util.slugify(from + ' ' + date),
+            from,
+            messages: [{ content, sender: from, date }],
+          })
+        } else {
+          await self.update(req, {
+            ...existingChat,
+            messages: [
+              ...existingChat.messages,
+              { content, sender: from, date }
+            ]
+          })
+        }
+
         if (!registered.has(to)) {
           waitingList[to] = waitingList[to] || []
           waitingList[to].push({ content, from, to })
@@ -72,9 +131,9 @@ module.exports = {
         if (data.userID) {
           socket.join(data.userID)
           socket.userID = data.userID
-          if (data.userID !== 'adminID') {
-            registered.add(data.userID)
-          }
+          registered.add(data.userID)
+          // if (data.userID !== 'adminID') {
+          // }
 
           if (waitingList[data.userID]) {
             waitingList[data.userID].forEach(({ content, from, to }) => {

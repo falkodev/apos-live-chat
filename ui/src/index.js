@@ -53,13 +53,13 @@ export default () => {
             from: userID
           });
         }, 400)
-        setTimeout(() => {
-          socket.emit("private message", {
-            content: 'fourth private message',
-            to: 'adminID',
-            from: userID
-          });
-        }, 2000)
+        // setTimeout(() => {
+        //   socket.emit("private message", {
+        //     content: 'fourth private message',
+        //     to: 'adminID',
+        //     from: userID
+        //   });
+        // }, 2000)
 
         socket.on("private message", ({ content, from, to }) => {
           console.log('=================> private message <=================', content, from, to)
