@@ -38,8 +38,8 @@
           </template>
         </AposModalBody>
         <div class="apos-modal__chat">
-          <div v-for="message in currentChat?.messages" :key="message._id">
-            <p>{{ message.content }}</p>
+          <div class="apos-modal__message" v-for="message in currentChat?.messages" :key="message._id">
+            <span>{{ message.content }}</span>
           </div>
         </div>
       </div>
@@ -461,5 +461,15 @@ export default {
   border-left: 1px solid var(--a-base-9);
   max-height: 100vw;
   overflow: scroll;
+}
+
+.apos-modal__message {
+  color: #333;
+  background-color: #f5f5f5;
+  border-radius: 20px;
+  font-weight: 700;
+  width: fit-content;
+  padding: 10px;
+  margin-bottom: 10px;
 }
 </style>
