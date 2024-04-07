@@ -8,34 +8,41 @@
       <AposUtilityOperations :module-options="moduleOptions" :has-relationship-field="!!relationshipField" />
     </template>
     <template #main>
-      <AposModalBody>
-        <template #bodyHeader>
-          <AposDocsManagerToolbar :selected-state="selectAllState" :total-pages="totalPages" :current-page="currentPage"
-            :filter-choices="filterChoices" :filter-values="filterValues" :filters="moduleOptions.filters"
-            :labels="moduleLabels" :displayed-items="items.length" :is-relationship="!!relationshipField"
-            :checked="checked" :checked-count="checked.length" :batch-operations="moduleOptions.batchOperations"
-            :module-name="moduleName" :options="{
+      <div style="display: flex;">
+        <AposModalBody>
+          <template #bodyHeader>
+            <AposDocsManagerToolbar :selected-state="selectAllState" :total-pages="totalPages"
+              :current-page="currentPage" :filter-choices="filterChoices" :filter-values="filterValues"
+              :filters="moduleOptions.filters" :labels="moduleLabels" :displayed-items="items.length"
+              :is-relationship="!!relationshipField" :checked="checked" :checked-count="checked.length"
+              :batch-operations="moduleOptions.batchOperations" :module-name="moduleName" :options="{
     disableUnchecked: maxReached()
   }" @select-click="selectAll" @search="onSearch" @page-change="updatePage" @filter="filter"
-            @batch="handleBatchAction" />
-          <AposDocsManagerSelectBox :selected-state="selectAllState" :module-labels="moduleLabels"
-            :filter-values="filterValues" :checked-ids="checked" :all-pieces-selection="allPiecesSelection"
-            :displayed-items="items.length" @select-all="selectAllPieces"
-            @set-all-pieces-selection="setAllPiecesSelection" />
-        </template>
-        <template #bodyMain>
-          <AposDocsManagerDisplay :key="refreshKey" v-if="items.length > 0" v-model:checked="checked" :items="items" :headers="headers"
-            :options="{
+              @batch="handleBatchAction" />
+            <AposDocsManagerSelectBox :selected-state="selectAllState" :module-labels="moduleLabels"
+              :filter-values="filterValues" :checked-ids="checked" :all-pieces-selection="allPiecesSelection"
+              :displayed-items="items.length" @select-all="selectAllPieces"
+              @set-all-pieces-selection="setAllPiecesSelection" />
+          </template>
+          <template #bodyMain>
+            <AposDocsManagerDisplay :key="refreshKey" v-if="items.length > 0" v-model:checked="checked" :items="items"
+              :headers="headers" :options="{
     ...moduleOptions,
     disableUnchecked: maxReached(),
     disableUnpublished: disableUnpublished,
     manuallyPublished: manuallyPublished
   }" @open="edit" />
-          <div v-else class="apos-pieces-manager__empty">
-            <AposEmptyState :empty-state="emptyDisplay" />
+            <div v-else class="apos-pieces-manager__empty">
+              <AposEmptyState :empty-state="emptyDisplay" />
+            </div>
+          </template>
+        </AposModalBody>
+        <div class="apos-modal__chat">
+          <div v-for="message in currentChat?.messages" :key="message._id">
+            <p>{{ message.content }}</p>
           </div>
-        </template>
-      </AposModalBody>
+        </div>
+      </div>
     </template>
   </AposModal>
 </template>
@@ -82,7 +89,8 @@ export default {
         isSelected: false,
         total: 0
       },
-      refreshKey: 0
+      refreshKey: 0,
+      currentChat: null,
     };
   },
   computed: {
@@ -164,6 +172,9 @@ export default {
     await this.getAllPiecesTotal();
     this.modal.triggerFocusRefresh++;
 
+    console.log('this.items ====> ', this.items)
+    this.currentChat = this.items?.[0]
+
     apos.bus.$on('content-changed', this.getPieces);
     apos.bus.$on('command-menu-manager-create-new', this.create);
     apos.bus.$on('command-menu-manager-close', this.confirmAndCancel);
@@ -218,7 +229,6 @@ export default {
       await this.edit(null);
     },
 
-    // If pieceOrId is null, a new piece is created
     async edit(pieceOrId) {
       let piece;
       if ((typeof pieceOrId) === 'object') {
@@ -228,25 +238,7 @@ export default {
       } else {
         piece = null;
       }
-      let moduleName;
-      // Don't assume the piece has the type of the module,
-      // this could be a virtual piece type such as "submitted-draft"
-      // that manages docs of many types
-      if (piece) {
-        if (piece.slug.startsWith('/')) {
-          moduleName = '@apostrophecms/page';
-        } else {
-          moduleName = piece.type;
-        }
-      } else {
-        moduleName = this.moduleName;
-      }
-
-      await apos.modal.execute(apos.modules[moduleName].components.editorModal, {
-        moduleName,
-        docId: piece && piece._id,
-        filterValues: this.filterValues
-      });
+      this.currentChat = piece
     },
     async finishSaved() {
       await this.getPieces();
@@ -461,5 +453,13 @@ export default {
 
 .apos-pieces-manager__relationship__counts {
   margin-bottom: 20px;
+}
+
+.apos-modal__chat {
+  width: 50%;
+  padding: 40px;
+  border-left: 1px solid var(--a-base-9);
+  max-height: 100vw;
+  overflow: scroll;
 }
 </style>
