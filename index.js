@@ -13,19 +13,8 @@ module.exports = {
   options: {
     name: 'apos-live-chat',
     localized: false,
-    // label: 'aposTemplate:label',
-    // pluralLabel: 'aposTemplate:pluralLabel',
-    // quickCreate: false,
-    // showPermissions: true,
-    // editRole: 'editor',
-    // publishRole: 'editor',
-    // autopublish: true,
-    // seoFields: false,
-    // openGraph: false,
-    // i18n: {
-    //   ns: 'aposTemplate',
-    //   browser: true
-    // },
+    quickCreate: false,
+    autopublish: true,
     components: {
       managerModal: 'AposLiveChatManager',
       // editorModal: 'AposTemplateLibraryEditor'

@@ -87,7 +87,11 @@ export default {
   },
   computed: {
     moduleOptions() {
-      return window.apos.modules[this.moduleName];
+      return {
+        ...window.apos.modules[this.moduleName],
+        batchOperations: window.apos.modules[this.moduleName].batchOperations.filter(op => op.action !== 'publish'),
+        showCreate: false
+      };
     },
     moduleLabels() {
       return {
@@ -438,8 +442,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// TODO: .apos-pieces-manager__empty is shared with
-// `apos-media-manager__empty`. We should combine somehow.
+:deep(.apos-modal__body) {
+  width: 50%;
+}
+
 .apos-pieces-manager__empty {
   display: flex;
   justify-content: center;
