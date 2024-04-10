@@ -18,9 +18,8 @@ export default {
     this.messagesCount = this.item?.messages?.length;
   },
 
-  async updated() {
-    const response = await apos.http.get(apos.modules['apos-live-chat'].action + '/' + this.item._id, {});
-    this.messagesCount = response?.messages?.length;
+  updated() {
+    this.messagesCount = this.item?.messages?.length;
   },
 }
 </script>

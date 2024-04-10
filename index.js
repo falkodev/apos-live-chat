@@ -17,7 +17,6 @@ module.exports = {
     autopublish: true,
     components: {
       managerModal: 'AposLiveChatManager',
-      // editorModal: 'AposTemplateLibraryEditor'
     }
   },
 
@@ -121,8 +120,6 @@ module.exports = {
           socket.join(data.userID)
           socket.userID = data.userID
           registered.add(data.userID)
-          // if (data.userID !== 'adminID') {
-          // }
 
           if (waitingList[data.userID]) {
             waitingList[data.userID].forEach(({ content, from, to }) => {
@@ -176,11 +173,3 @@ function getBundleModuleNames () {
     .filter(dirent => dirent.isDirectory())
     .map(dirent => `@apostrophecms/${dirent.name}`)
 }
-// TODO: piece manager with button/link not leading to piece editor but to a modal with conversation
-// -----------------------------------------------------------
-// | conv 1 | display                                         |
-// | conv 2 | messages                                        |
-// | conv 3 | of focused                                      |
-// | conv 4 | conversation                                    |
-// | conv 5 | here                                            |
-// -----------------------------------------------------------

@@ -37,11 +37,8 @@
             </div>
           </template>
         </AposModalBody>
-        <div class="apos-modal__chat">
-          <div v-for="message in currentChat?.messages" :key="message._id">
-            <p>{{ message.content }}</p>
-          </div>
-        </div>
+        <AposLiveChatMessenger :key="refreshKey" :chat="currentChat"
+          @chat-updated="handleChatUpdated" />
       </div>
     </template>
   </AposModal>
@@ -91,6 +88,7 @@ export default {
       },
       refreshKey: 0,
       currentChat: null,
+      socket: null
     };
   },
   computed: {
@@ -172,19 +170,20 @@ export default {
     await this.getAllPiecesTotal();
     this.modal.triggerFocusRefresh++;
 
-    console.log('this.items ====> ', this.items)
     this.currentChat = this.items?.[0]
 
     apos.bus.$on('content-changed', this.getPieces);
     apos.bus.$on('command-menu-manager-create-new', this.create);
     apos.bus.$on('command-menu-manager-close', this.confirmAndCancel);
 
+
+    //TODO: detect new conversation and refresh list of items
     const config = await apos.http.get('apos-live-chat/config', {
       busy: true,
     })
-    localStorage.debug = '*';
     const connectionType = config.secure ? 'wss' : 'ws'
     const socket = io(`${connectionType}://${config.domain}:${config.port}`)
+    this.socket = socket
 
     socket.emit("register", {
       userID: 'adminID',
@@ -194,22 +193,15 @@ export default {
     socket.on("private message", ({ content, from, to }) => {
       console.log('=================> private message <=================', content)
 
-      setTimeout(() => {
-        socket.emit("private message", {
-          content: 'second private message',
-          to: from,
-          from: to
-        });
+      const index = this.items.findIndex(item => item.from === from);
+      if (index > -1) {
+        this.items[index].messages.push({
+          content,
+          sender: from,
+          date: new Date().toISOString()
+        })
         this.refreshKey++;
-        console.log('this.refreshKey ====> ', this.refreshKey)
-      }, 500)
-      // setTimeout(() => {
-      //   socket.emit("private message", {
-      //     content: 'third private message',
-      //     to: from,
-      //     from: to
-      //   });
-      // }, 1500)
+      }
     });
   },
   unmounted() {
@@ -219,6 +211,18 @@ export default {
     apos.bus.$off('command-menu-manager-close', this.confirmAndCancel);
   },
   methods: {
+    handleChatUpdated(newMessage) {
+      this.socket.emit(newMessage.type, newMessage.message);
+      const index = this.items.findIndex(item => item.from === newMessage.message.to);
+      if (index > -1) {
+        this.items[index].messages.push({
+          content: newMessage.message.content,
+          sender: 'adminID',
+          date: new Date().toISOString()
+        })
+        this.refreshKey++
+      }
+    },
     setCheckedDocs(checked) {
       this.checkedDocs = checked;
       this.checked = this.checkedDocs.map(item => {
@@ -383,8 +387,6 @@ export default {
       });
       if (result) {
         const index = this.checkedDocs.findIndex(_item => _item._id === item._id);
-        // TODO verify it's still reactive, should be based on the doc
-        // Or use a filter here
         this.checkedDocs.splice(index, 1, {
           ...this.checkedDocs[index],
           _fields: result
@@ -428,14 +430,37 @@ export default {
           console.error(error);
         }
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 :deep(.apos-modal__body) {
   width: 50%;
+}
+
+:deep(.apos-modal__main) {
+  overflow: hidden;
+}
+
+@media (max-width: 1048px) {
+  :deep(.apos-manager-toolbar .apos-field--search) {
+    width: auto;
+  }
+}
+@media (max-width: 1620px) {
+  :deep(.apos-manager-toolbar .apos-field--search) {
+    width: 160px;
+  }
+  :deep([data-apos-test="archiveTrigger"]) {
+    .apos-button__label {
+      display: none;
+    }
+    .apos-button__icon {
+      margin-right: 0;
+    }
+  }
 }
 
 .apos-pieces-manager__empty {
@@ -453,13 +478,5 @@ export default {
 
 .apos-pieces-manager__relationship__counts {
   margin-bottom: 20px;
-}
-
-.apos-modal__chat {
-  width: 50%;
-  padding: 40px;
-  border-left: 1px solid var(--a-base-9);
-  max-height: 100vw;
-  overflow: scroll;
 }
 </style>
