@@ -18,9 +18,6 @@ export default {
     this.messagesCount = this.item?.messages?.length;
   },
 
-  updated() {
-    this.messagesCount = this.item?.messages?.length;
-  },
 }
 </script>
 

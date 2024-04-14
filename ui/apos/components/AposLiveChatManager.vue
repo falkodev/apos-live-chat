@@ -25,20 +25,19 @@
               @set-all-pieces-selection="setAllPiecesSelection" />
           </template>
           <template #bodyMain>
-            <AposDocsManagerDisplay :key="refreshKey" v-if="items.length > 0" v-model:checked="checked" :items="items"
-              :headers="headers" :options="{
+            <AposLiveChatManagerDisplay :key="refreshKey" v-if="items.length > 0" v-model:checked="checked"
+              :items="items" :headers="headers" :options="{
     ...moduleOptions,
     disableUnchecked: maxReached(),
     disableUnpublished: disableUnpublished,
     manuallyPublished: manuallyPublished
-  }" @open="edit" />
+  }" :current-chat="currentChat" @open="edit" />
             <div v-else class="apos-pieces-manager__empty">
               <AposEmptyState :empty-state="emptyDisplay" />
             </div>
           </template>
         </AposModalBody>
-        <AposLiveChatMessenger :key="refreshKey" :chat="currentChat"
-          @chat-updated="handleChatUpdated" />
+        <AposLiveChatMessenger :key="refreshKey" :chat="currentChat" @chat-updated="handleChatUpdated" />
       </div>
     </template>
   </AposModal>
@@ -88,7 +87,7 @@ export default {
       },
       refreshKey: 0,
       currentChat: null,
-      socket: null
+      socket: null,
     };
   },
   computed: {
@@ -190,7 +189,7 @@ export default {
     });
     socket.userID = 'adminID'
 
-    socket.on("private message", ({ content, from, to }) => {
+    socket.on("private message", async ({ content, from, to }) => {
       console.log('=================> private message <=================', content)
 
       const index = this.items.findIndex(item => item.from === from);
@@ -201,14 +200,7 @@ export default {
           date: new Date().toISOString()
         })
       } else {
-        this.items.push({
-          from,
-          messages: [{
-            content,
-            sender: from,
-            date: new Date().toISOString()
-          }]
-        })
+        await this.getPieces();
       }
       this.refreshKey++;
     });

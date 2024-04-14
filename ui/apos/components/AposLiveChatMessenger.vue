@@ -46,7 +46,7 @@ export default {
     width: 50%;
     padding: 40px;
     border-left: 1px solid var(--a-base-9);
-    max-height: 100vw;
+    max-height: calc(100vh - 120px);
     overflow: auto;
     display: flex;
     flex-direction: column;
