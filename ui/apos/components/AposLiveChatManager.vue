@@ -200,8 +200,17 @@ export default {
           sender: from,
           date: new Date().toISOString()
         })
-        this.refreshKey++;
+      } else {
+        this.items.push({
+          from,
+          messages: [{
+            content,
+            sender: from,
+            date: new Date().toISOString()
+          }]
+        })
       }
+      this.refreshKey++;
     });
   },
   unmounted() {
