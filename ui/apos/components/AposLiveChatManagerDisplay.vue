@@ -102,6 +102,11 @@ export default {
       state,
     };
   },
+  updated() {
+    if (this.items.length && this.currentChat?._id !== this.items[0]?._id) {
+      this.$emit('open', this.items[0]);
+    }
+  },
   computed: {
     checkProxy: {
       get() {

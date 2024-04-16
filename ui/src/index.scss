@@ -91,3 +91,8 @@ $breakpoints: (
     cursor: pointer;
   }
 }
+
+.apos-notification--info .apos-notification__indicator__icon {
+  color: #B28BEE !important;
+  border-radius: 50%;
+}

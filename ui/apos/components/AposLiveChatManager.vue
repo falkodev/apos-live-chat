@@ -176,7 +176,6 @@ export default {
     apos.bus.$on('command-menu-manager-close', this.confirmAndCancel);
 
 
-    //TODO: detect new conversation and refresh list of items
     const config = await apos.http.get('apos-live-chat/config', {
       busy: true,
     })
@@ -186,6 +185,7 @@ export default {
 
     socket.emit("register", {
       userID: 'adminID',
+      aposUserId: window.apos.login.user?._id
     });
     socket.userID = 'adminID'
 

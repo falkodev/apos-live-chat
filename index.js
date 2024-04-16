@@ -17,7 +17,7 @@ module.exports = {
     autopublish: true,
     components: {
       managerModal: 'AposLiveChatManager',
-    }
+    },
   },
 
   icons: {
@@ -80,13 +80,14 @@ module.exports = {
     io.on('connection', (socket) => {
       socket.on("private message", async ({ content, from, to }) => {
         console.log('=================> private message <=================', from, content)
+
         const chats = await self.find(req, {}).toArray()
         // console.log('chats', require('util').inspect(chats, { colors: true, depth: 1 }))
         const condition = from === 'adminID' ? to : from
-        const existingChat = chats.find(chat => chat.from === condition)
+        let existingChat = chats.find(chat => chat.from === condition)
         const date = new Date().toISOString()
         if (!existingChat) {
-          await self.insert(req, {
+          existingChat = await self.insert(req, {
             title: date,
             slug: self.apos.util.slugify(from + ' ' + date),
             from,
@@ -99,6 +100,13 @@ module.exports = {
               ...existingChat.messages,
               { content, sender: from, date }
             ]
+          })
+        }
+
+        if (from !== 'adminID') {
+          console.log('req.user', require('util').inspect(req.user, { colors: true, depth: 1 }))
+          await self.apos.notify(req, `New message received on conversation ${existingChat.title}`, {
+            type: 'info',
           })
         }
 
@@ -116,6 +124,11 @@ module.exports = {
       });
 
       socket.on('register', (data) => {
+        if (data.aposUserId) {
+          req.user = req.user || {}
+          req.user._id = data.aposUserId
+        }
+
         if (data.userID) {
           socket.join(data.userID)
           socket.userID = data.userID
