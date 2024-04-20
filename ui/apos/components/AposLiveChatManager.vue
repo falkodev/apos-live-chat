@@ -322,10 +322,11 @@ export default {
         docs
       });
     },
-    updatePage(num) {
+    async updatePage(num) {
       if (num) {
         this.currentPage = num;
-        this.getPieces();
+        await this.getPieces();
+        this.currentChat = this.items?.[0]
       }
     },
     async search(query) {

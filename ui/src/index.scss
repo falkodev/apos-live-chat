@@ -63,13 +63,56 @@ $breakpoints: (
   gap: 20px;
   padding: 20px;
   max-width: 50%;
-  top: 50%;
+  height: 300px;
 
-  &__message {
-    color: $color-main;
+  &__container {
+    position: relative;
+    height: 100%;
+  }
+
+  &__messages {
+    // color: $color-main;
     font-size: 20px;
     font-weight: bold;
     text-align: center;
+    height: 92%;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+    width: 300px;
+  }
+
+  &__message {
+    display: flex;
+    gap: 10px;
+    flex-direction: column-reverse;
+    width: 180px;
+    align-self: end;
+
+    &--sender {
+      align-self: start;
+    }
+  }
+
+  &__text {
+    border-radius: 8px;
+    white-space: pre-wrap;
+    display: table;
+    position: relative;
+    padding: 10px;
+    background: #f4f4f4;
+
+    &--sender {
+      background-color: #6516dd;
+      color: #fff !important;
+    }
+  }
+
+  &__date {
+    align-self: center;
+    font-size: 11px;
+    color: #a5a5a5;
   }
 
   &__buttons {

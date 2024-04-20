@@ -5,12 +5,17 @@
       <div class="apos-modal__chat-text" :class="{ 'apos-modal__chat-text--sender': message.sender === 'adminID' }">
         {{ message.content }}
       </div>
+      <span class="apos-modal__chat-date" :class="{ 'apos-modal__chat-date--left': message.sender === 'adminID' }">
+        {{ formatDate(message.date) }}
+      </span>
     </div>
     <button @click="reply">Reply</button>
   </div>
 </template>
 
 <script>
+import dayjs from 'dayjs';
+
 export default {
   name: 'AposLiveChatMessenger',
 
@@ -27,6 +32,9 @@ export default {
   },
 
   methods: {
+    formatDate(value) {
+      return dayjs(value).format('YYYY-MM-DD HH:mm');
+    },
     async reply() {
       this.$emit("chat-updated", {
         type: "private message",
@@ -55,6 +63,7 @@ export default {
 
   .apos-modal__chat-message {
     display: flex;
+    gap: 10px;
 
     &--sender {
       flex-direction: row-reverse;
@@ -67,11 +76,17 @@ export default {
     display: table;
     position: relative;
     padding: 10px;
-    background: #f5f5f5;
+    background: var(--a-base-10);
 
     &--sender {
       background-color: var(--a-primary);
       color: var(--a-text-inverted) !important;
     }
+  }
+
+  .apos-modal__chat-date {
+    align-self: center;
+    font-size: 11px;
+    color: var(--a-base-5);
   }
 </style>

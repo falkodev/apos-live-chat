@@ -104,7 +104,6 @@ module.exports = {
         }
 
         if (from !== 'adminID') {
-          console.log('req.user', require('util').inspect(req.user, { colors: true, depth: 1 }))
           await self.apos.notify(req, `New message received on conversation ${existingChat.title}`, {
             type: 'info',
           })
@@ -174,6 +173,10 @@ module.exports = {
       get: {
         '/apos-live-chat/config': function (req) {
           return self.config
+        },
+        '/apos-live-chat/messages': async function (req) {
+          const conversation = await self.find(req, { from: req.query.userID }).toObject()
+          return conversation?.messages || []
         },
       },
     }

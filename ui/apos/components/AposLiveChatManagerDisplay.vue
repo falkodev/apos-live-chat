@@ -102,11 +102,6 @@ export default {
       state,
     };
   },
-  updated() {
-    if (this.items.length && this.currentChat?._id !== this.items[0]?._id) {
-      this.$emit('open', this.items[0]);
-    }
-  },
   computed: {
     checkProxy: {
       get() {
@@ -168,11 +163,31 @@ export default {
   cursor: pointer;
 }
 
-.apos-is-highlighted {
+.apos-is-highlighted  {
   background-color: rgba($color: #6517DD, $alpha: 0.5);
+
+  .apos-table__cell-field {
+    color: var(--a-text-inverted);
+  }
+
+  &:hover {
+    .apos-table__cell-field {
+      color: var(--a-text-primary);
+    }
+  }
 }
 
 .apos-is-active {
   background-color: #6517DD;
+
+  .apos-table__cell-field {
+    color: var(--a-text-inverted);
+  }
+
+  &:hover {
+    .apos-table__cell-field {
+      color: var(--a-text-primary);
+    }
+  }
 }
 </style>
