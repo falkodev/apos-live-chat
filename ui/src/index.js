@@ -86,7 +86,14 @@ export default () => {
 function popup (messages, { selector, color, confirm }) {
   const popup = document.querySelector(selector)
   popup.innerHTML = ''
-  // popup.style.borderColor = color
+
+  const closeIcon = document.createElement('div')
+  closeIcon.className = 't-popup__close'
+  const icon1 = document.createElement('i')
+  closeIcon.appendChild(icon1)
+  const icon2 = document.createElement('i')
+  closeIcon.appendChild(icon2)
+  popup.appendChild(closeIcon)
 
   const container = document.createElement('div')
   container.className = 't-popup__container'
@@ -120,16 +127,6 @@ function popup (messages, { selector, color, confirm }) {
   }
   container.appendChild(content)
 
-  // <div class="apos-modal__chat-message" :class="{ 'apos-modal__chat-message--sender': message.sender === 'adminID' }"
-  //   v-for="message in chat?.messages" :key="message._id">
-  //   <div class="apos-modal__chat-text" :class="{ 'apos-modal__chat-text--sender': message.sender === 'adminID' }">
-  //     {{ message.content }}
-  //   </div>
-  //   <span class="apos-modal__chat-date" :class="{ 'apos-modal__chat-date--left': message.sender === 'adminID' }">
-  //     {{ formatDate(message.date) }}
-  //   </span>
-  // </div>
-
   const buttons = document.createElement('div')
   buttons.className = 't-popup__buttons'
   container.appendChild(buttons)
@@ -152,12 +149,15 @@ function popup (messages, { selector, color, confirm }) {
   inputMessage.className = 't-popup__input'
   container.appendChild(inputMessage)
 
-  // document.body.addEventListener('click', (evt) => {
-  //   const keepOpen = evt.target?.getAttribute('data-open-popup')
-  //   if (!keepOpen) {
-  //     popup.style.display = 'none'
-  //   }
-  // })
+  popup.addEventListener('click', (evt) => {
+    evt.preventDefault()
+    evt.stopPropagation()
+    popup.classList.add('t-popup--open')
+  })
 
-  popup.style.display = 'block'
+  closeIcon.addEventListener('click', (evt) => {
+    evt.preventDefault()
+    evt.stopPropagation()
+    popup.classList.remove('t-popup--open')
+  })
 }
