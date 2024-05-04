@@ -181,6 +181,18 @@ $breakpoints: (
     font-weight: 600;
     cursor: pointer;
   }
+
+  &__input {
+    display: block;
+    border: 1px solid;
+    border-radius: 4px;
+    width: 200px;
+    max-height: 50px;
+    min-height: 37px;
+    top: -65px;
+    overflow-y: auto;
+    position: relative;
+  }
 }
 
 .apos-notification--info .apos-notification__indicator__icon {
