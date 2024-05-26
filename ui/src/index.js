@@ -30,120 +30,141 @@ export default () => {
         userID,
       })
       socket.userID = userID
-
+      socket.on('private message', (message) => {
+        message.sender = message.from
+        message.date = new Date()
+        addMessages([message])
+      })
       const messages = await apos.http.get('apos-live-chat/messages', {
         qs: { userID },
         busy: true,
       })
 
-      // setTimeout(() => {
-      //   console.log('socket ====> ', socket.userID)
-      //   socket.emit("private message", {
-      //     content: 'first private message',
-      //     to: 'adminID',
-      //     from: userID
-      //   });
-      // }, 400)
-      // setTimeout(() => {
-      //   socket.emit("private message", {
-      //     content: 'fourth private message',
-      //     to: 'adminID',
-      //     from: userID
-      //   });
-      // }, 2000)
+      const { selector, style } = { ...defaultConfig, ...config }
 
-      socket.on('private message', ({ content, from, to }) => {
-        console.log('=================> private message <=================', content, from, to)
+      const popup = document.querySelector(selector)
+      popup.innerHTML = ''
+
+      const closeIcon = document.createElement('div')
+      closeIcon.className = 't-popup__close'
+      const icon1 = document.createElement('i')
+      closeIcon.appendChild(icon1)
+      const icon2 = document.createElement('i')
+      closeIcon.appendChild(icon2)
+      popup.appendChild(closeIcon)
+
+      const container = document.createElement('div')
+      container.className = 't-popup__container'
+      popup.appendChild(container)
+
+      const content = document.createElement('div')
+      content.className = 't-popup__messages'
+      container.appendChild(content)
+
+      const send = document.createElement('form')
+      send.className = 't-popup__send'
+      container.appendChild(send)
+
+      const inputMessage = document.createElement('span')
+      inputMessage.className = 't-popup__input'
+      inputMessage.contentEditable = true
+      send.appendChild(inputMessage)
+
+      const sendButton = document.createElement('button')
+      sendButton.className = 't-popup__button t-popup__button--send'
+      sendButton.dataset.send = ''
+      send.appendChild(sendButton)
+
+      const sendIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+      sendIcon.setAttribute('width', '20')
+      sendIcon.setAttribute('height', '20')
+      sendIcon.setAttribute('viewBox', '0 0 512 512')
+      sendIcon.setAttribute('fill', '#000')
+      sendIcon.innerHTML = '<path d="M16,464,496,256,16,48V208l320,48L16,304Z"/>'
+      sendButton.appendChild(sendIcon)
+
+      Object.assign(container.style, style.container)
+      Object.assign(content.style, style.messages)
+      Object.assign(sendButton.style, style.sendButton)
+      Object.assign(sendIcon.style, style.sendIcon)
+      Object.assign(inputMessage.style, style.input)
+      Object.assign(popup.style, style.popup)
+
+      addMessages(messages)
+
+      popup.addEventListener('click', (evt) => {
+        evt.preventDefault()
+        evt.stopPropagation()
+        popup.classList.add('t-popup--open')
       })
 
-      popup(messages, { ...defaultConfig, ...config })
-    }
-  })
-}
+      closeIcon.addEventListener('click', (evt) => {
+        evt.preventDefault()
+        evt.stopPropagation()
+        popup.classList.remove('t-popup--open')
+      })
 
-/**
- * Popup function
- * @param {array} messages - required
- * @param {Object} buttons
- * @param {{label: string, action: function}} buttons.dismiss
- * @param {{label: string, action: function}} buttons.confirm
- */
-function popup (messages, { selector, color, confirm }) {
-  const popup = document.querySelector(selector)
-  popup.innerHTML = ''
+      sendButton.addEventListener('click', (evt) => {
+        evt.preventDefault()
+        evt.stopPropagation()
 
-  const closeIcon = document.createElement('div')
-  closeIcon.className = 't-popup__close'
-  const icon1 = document.createElement('i')
-  closeIcon.appendChild(icon1)
-  const icon2 = document.createElement('i')
-  closeIcon.appendChild(icon2)
-  popup.appendChild(closeIcon)
+        const content = inputMessage.innerText
+        if (!content) {
+          return
+        }
+        let userID = localStorage.getItem('userID')
+        if (!userID) {
+          userID = Date.now().toString(36) + Math.random().toString(36).substr(2)
+          localStorage.setItem('userID', userID)
+        }
+        console.log('socket ====> ', socket.userID)
+        socket.emit('private message', {
+          content,
+          to: 'adminID',
+          from: userID,
+        })
+        inputMessage.innerText = ''
+        addMessages([{
+          content,
+          sender: userID,
+          date: new Date(),
+        }])
+      })
 
-  const container = document.createElement('div')
-  container.className = 't-popup__container'
-  popup.appendChild(container)
+      function addMessages (messages) {
+        for (let i = 0; i < messages.length; i++) {
+          const message = messages[i]
+          const messageDiv = document.createElement('div')
+          messageDiv.className = 't-popup__message'
 
-  const content = document.createElement('div')
-  content.className = 't-popup__messages'
+          const textDiv = document.createElement('div')
+          textDiv.className = 't-popup__text'
+          textDiv.innerText = message.content
+          messageDiv.appendChild(textDiv)
 
-  for (let i = 0; i < messages.length; i++) {
-    const message = messages[i]
-    const messageDiv = document.createElement('div')
-    messageDiv.className = 't-popup__message'
+          const messageDate = document.createElement('span')
+          messageDate.className = 't-popup__date'
+          messageDate.innerText = new Date(message.date).toLocaleDateString() + ' ' + new Date(message.date).toLocaleTimeString()
+          messageDiv.appendChild(messageDate)
 
-    const textDiv = document.createElement('div')
-    textDiv.className = 't-popup__text'
-    textDiv.innerText = message.content
-    messageDiv.appendChild(textDiv)
+          if (message.sender !== 'adminID') {
+            messageDiv.classList.add('t-popup__message--sender')
+            textDiv.classList.add('t-popup__text--sender')
+            messageDate.classList.add('t-popup__date--right')
+          }
 
-    const messageDate = document.createElement('span')
-    messageDate.className = 't-popup__date'
-    messageDate.innerText = new Date(message.date).toLocaleDateString() + ' ' + new Date(message.date).toLocaleTimeString()
-    messageDiv.appendChild(messageDate)
-
-    if (message.sender !== 'adminID') {
-      messageDiv.classList.add('t-popup__message--sender')
-      textDiv.classList.add('t-popup__text--sender')
-      messageDate.classList.add('t-popup__date--right')
-    }
-
-    content.appendChild(messageDiv)
-  }
-  container.appendChild(content)
-
-  const buttons = document.createElement('div')
-  buttons.className = 't-popup__buttons'
-  container.appendChild(buttons)
-
-  if (confirm) {
-    if (confirm.label) {
-      const confirmButton = document.createElement('button')
-      confirmButton.className = 't-popup__button t-popup__button--confirm'
-      confirmButton.dataset.confirm = ''
-      confirmButton.innerText = confirm.label
-      buttons.appendChild(confirmButton)
-
-      if (confirm.action) {
-        confirmButton.addEventListener('click', () => confirm.action())
+          content.appendChild(messageDiv)
+        }
       }
+      // /**
+      //  * Popup function
+      //  * @param {array} messages - required
+      //  * @param {Object} config
+      //  * @param {{string}} config.selector
+      //  * @param {{Object}} config.style
+      //  */
+      // function popup(messages, { selector, style }) {
+      // }
     }
-  }
-
-  const inputMessage = document.createElement('span')
-  inputMessage.className = 't-popup__input'
-  inputMessage.contentEditable = true
-  container.appendChild(inputMessage)
-
-  popup.addEventListener('click', (evt) => {
-    evt.preventDefault()
-    evt.stopPropagation()
-    popup.classList.add('t-popup--open')
-  })
-
-  closeIcon.addEventListener('click', (evt) => {
-    evt.preventDefault()
-    evt.stopPropagation()
-    popup.classList.remove('t-popup--open')
   })
 }

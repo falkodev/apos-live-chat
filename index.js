@@ -44,9 +44,9 @@ module.exports = {
               label: 'Date',
             },
           },
-        }
+        },
       },
-    }
+    },
   },
 
   columns: {
@@ -54,8 +54,8 @@ module.exports = {
       messagesCount: {
         label: 'Messages',
         component: 'ColumnMessagesCount',
-      }
-    }
+      },
+    },
   },
 
   init (self) {
@@ -78,7 +78,7 @@ module.exports = {
     const waitingList = {}
     const req = self.apos.task.getReq()
     io.on('connection', (socket) => {
-      socket.on("private message", async ({ content, from, to }) => {
+      socket.on('private message', async ({ content, from, to }) => {
         console.log('=================> private message <=================', from, content)
 
         const chats = await self.find(req, {}).toArray()
@@ -98,8 +98,8 @@ module.exports = {
             ...existingChat,
             messages: [
               ...existingChat.messages,
-              { content, sender: from, date }
-            ]
+              { content, sender: from, date },
+            ],
           })
         }
 
@@ -115,12 +115,12 @@ module.exports = {
           return
         }
 
-        socket.to(to).emit("private message", {
+        socket.to(to).emit('private message', {
           content,
           from,
           to,
-        });
-      });
+        })
+      })
 
       socket.on('register', (data) => {
         if (data.aposUserId) {
@@ -135,11 +135,11 @@ module.exports = {
 
           if (waitingList[data.userID]) {
             waitingList[data.userID].forEach(({ content, from, to }) => {
-              io.to(data.userID).emit("private message", {
+              io.to(data.userID).emit('private message', {
                 content,
                 from,
                 to,
-              });
+              })
             })
             delete waitingList[data.userID]
           }

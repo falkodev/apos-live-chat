@@ -47,8 +47,10 @@ $breakpoints: (
 
 .t-popup {
   border-style: solid;
+  border-width: 3px;
+  border-color: $color-black;
   background-color: $color-secondary;
-  box-shadow: 10px 5px 5px $color-grey-60;
+  box-shadow: 10px 5px 5px $color-grey-70;
   z-index: 2001;
   position: fixed;
   bottom: 40px;
@@ -66,13 +68,13 @@ $breakpoints: (
   cursor: pointer;
 
   &--open {
-    height: 300px;
-    width: 200px;
+    height: 700px;
+    width: 400px;
     border-radius: 16px;
     cursor: default;
 
     .t-popup__container {
-      display: block;
+      display: flex;
     }
 
     .t-popup__close {
@@ -85,9 +87,9 @@ $breakpoints: (
     width: 50px;
     height: 50px;
     display: none;
-    position: relative;
-    top: -40px;
-    right: -35px;
+    position: absolute;
+    top: -28px;
+    right: -20px;
     float: right;
     background: white;
     border-radius: 50%;
@@ -115,7 +117,9 @@ $breakpoints: (
   &__container {
     position: relative;
     height: 100%;
+    width: 100%;
     display: none;
+    flex-direction: column;
   }
 
   &__messages {
@@ -128,7 +132,7 @@ $breakpoints: (
     display: flex;
     flex-direction: column;
     row-gap: 20px;
-    width: 300px;
+    width: 100%;
   }
 
   &__message {
@@ -163,7 +167,7 @@ $breakpoints: (
     color: #a5a5a5;
   }
 
-  &__buttons {
+  &__send {
     display: flex;
     align-items: center;
     gap: 20px;
@@ -180,16 +184,19 @@ $breakpoints: (
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
+
+    svg {
+      pointer-events: none;
+    }
   }
 
   &__input {
     display: block;
     border: 1px solid;
     border-radius: 4px;
-    width: 200px;
+    width: 80%;
     max-height: 50px;
     min-height: 37px;
-    top: -65px;
     overflow-y: auto;
     position: relative;
   }

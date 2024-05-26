@@ -9,7 +9,7 @@
         {{ formatDate(message.date) }}
       </span>
     </div>
-    <button @click="reply">Reply</button>
+    <button v-if="chat?.messages?.length" @click="reply">Reply</button>
   </div>
 </template>
 
