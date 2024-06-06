@@ -82,6 +82,14 @@ $breakpoints: (
     }
   }
 
+  &__icon {
+    position: absolute;
+    width: 2em;
+    height: 2em;
+    top: 11px;
+    right: 8px;
+  }
+
   &__close {
     cursor: pointer;
     width: 50px;

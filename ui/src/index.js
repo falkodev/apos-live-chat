@@ -12,6 +12,7 @@ export default () => {
       const defaultConfig = {
         selector: '#chat-app',
         color: 'green',
+        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24"><path fill="currentColor" d="M17 12V3a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v14l4-4h10a1 1 0 0 0 1-1m4-6h-2v9H6v2a1 1 0 0 0 1 1h11l4 4V7a1 1 0 0 0-1-1"/></svg>'
       }
 
       const config = await apos.http.get('apos-live-chat/config', {
@@ -40,10 +41,15 @@ export default () => {
         busy: true,
       })
 
-      const { selector, style } = { ...defaultConfig, ...config }
+      const { selector, style, icon } = { ...defaultConfig, ...config }
 
       const popup = document.querySelector(selector)
       popup.innerHTML = ''
+
+      const iconDiv = document.createElement('div')
+      iconDiv.className = 't-popup__icon'
+      iconDiv.innerHTML = icon
+      popup.appendChild(iconDiv)
 
       const closeIcon = document.createElement('div')
       closeIcon.className = 't-popup__close'
