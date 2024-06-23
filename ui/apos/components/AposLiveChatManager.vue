@@ -440,6 +440,7 @@ export default {
 <style lang="scss" scoped>
 :deep(.apos-modal__body) {
   width: 50%;
+  border-right: 1px solid var(--a-base-9);
 }
 
 :deep(.apos-modal__main) {
