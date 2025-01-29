@@ -49,6 +49,10 @@ $color-secondary: $color-white;
     height: 2em;
     top: 11px;
     right: 8px;
+
+    img {
+      width: inherit;
+    }
   }
 
   &__close {
@@ -145,11 +149,9 @@ $color-secondary: $color-white;
   &__button {
     background-color: $color-main;
     position: relative;
-    border: none;
     border-radius: 7px;
     padding: 12px 24px;
     margin: 0 auto;
-    color: $color-white;
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
@@ -157,6 +159,11 @@ $color-secondary: $color-white;
     svg {
       pointer-events: none;
       fill: $color-white;
+    }
+
+    img {
+      width: 20px;
+      height: 20px;
     }
   }
 

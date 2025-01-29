@@ -161,7 +161,7 @@ module.exports = {
           {
             icon: 'forum-icon',
             contextUtility: true,
-            tooltip: 'aposTemplate:tooltip',
+            tooltip: 'Apos Live Chat manager',
           },
         )
       },

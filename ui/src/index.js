@@ -12,7 +12,7 @@ export default () => {
       const defaultConfig = {
         selector: '#chat-app',
         color: 'green',
-        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24"><path fill="currentColor" d="M17 12V3a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v14l4-4h10a1 1 0 0 0 1-1m4-6h-2v9H6v2a1 1 0 0 0 1 1h11l4 4V7a1 1 0 0 0-1-1"/></svg>'
+        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24"><path d="M17 12V3a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v14l4-4h10a1 1 0 0 0 1-1m4-6h-2v9H6v2a1 1 0 0 0 1 1h11l4 4V7a1 1 0 0 0-1-1"/></svg>',
       }
 
       const config = await apos.http.get('apos-live-chat/config', {
@@ -41,7 +41,7 @@ export default () => {
         busy: true,
       })
 
-      const { selector, style, icon } = { ...defaultConfig, ...config }
+      const { selector, style, icon, icons } = { ...defaultConfig, ...config }
 
       const popup = document.querySelector(selector)
       popup.innerHTML = ''
@@ -95,6 +95,29 @@ export default () => {
       Object.assign(sendIcon.style, style.sendIcon)
       Object.assign(inputMessage.style, style.input)
       Object.assign(popup.style, style.popup)
+      Object.assign(iconDiv.style, style.defaultIcon)
+
+      if (icons) {
+        if (icons.default) {
+          if (icons.default?.type === 'img') {
+            iconDiv.innerHTML = `<img src="${apos.util.assetUrl(icons.default.src)}" alt="chat icon" />`
+          } else if (icons.default?.type === 'svg') {
+            iconDiv.innerHTML = icons.default.src
+          }
+        }
+        if (icons.send) {
+          sendButton.removeChild(sendIcon)
+          if (icons.send?.type === 'img') {
+            const sendIconImg = document.createElement('img')
+            sendIconImg.src = apos.util.assetUrl(icons.send.src)
+            sendIconImg.alt = 'send icon'
+            Object.assign(sendIconImg.style, style.sendIcon)
+            sendButton.appendChild(sendIconImg)
+          } else if (icons.send?.type === 'svg') {
+            sendButton.innerHTML += icons.send.src
+          }
+        }
+      }
 
       addMessages(messages)
 
