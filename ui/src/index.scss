@@ -68,12 +68,18 @@ $color-secondary: $color-white;
     border-radius: 50%;
     border: 1px solid black;
 
+    div {
+      position: relative;
+      width: 0;
+      background-color: #6200ee;
+    }
+
     i {
       top: 23px;
       position: relative;
       display: block;
       height: 2px;
-      background: #6200ee;
+      background: inherit;
       width: 30px;
       left: 10px;
     }

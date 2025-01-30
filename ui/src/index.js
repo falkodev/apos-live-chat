@@ -51,13 +51,15 @@ export default () => {
       iconDiv.innerHTML = icon
       popup.appendChild(iconDiv)
 
+      const closeButton = document.createElement('div')
+      closeButton.className = 't-popup__close'
       const closeIcon = document.createElement('div')
-      closeIcon.className = 't-popup__close'
       const icon1 = document.createElement('i')
       closeIcon.appendChild(icon1)
       const icon2 = document.createElement('i')
       closeIcon.appendChild(icon2)
-      popup.appendChild(closeIcon)
+      closeButton.appendChild(closeIcon)
+      popup.appendChild(closeButton)
 
       const container = document.createElement('div')
       container.className = 't-popup__container'
@@ -93,6 +95,8 @@ export default () => {
       Object.assign(content.style, style.messages)
       Object.assign(sendButton.style, style.sendButton)
       Object.assign(sendIcon.style, style.sendIcon)
+      Object.assign(closeButton.style, style.closeButton)
+      Object.assign(closeIcon.style, style.closeIcon)
       Object.assign(inputMessage.style, style.input)
       Object.assign(popup.style, style.popup)
       Object.assign(iconDiv.style, style.defaultIcon)
@@ -105,6 +109,7 @@ export default () => {
             iconDiv.innerHTML = icons.default.src
           }
         }
+
         if (icons.send) {
           sendButton.removeChild(sendIcon)
           if (icons.send?.type === 'img') {
@@ -115,6 +120,20 @@ export default () => {
             sendButton.appendChild(sendIconImg)
           } else if (icons.send?.type === 'svg') {
             sendButton.innerHTML += icons.send.src
+          }
+        }
+
+        if (icons.close) {
+          if (icons.close?.type === 'img') {
+            closeButton.removeChild(closeIcon)
+            const closeIconImg = document.createElement('img')
+            closeIconImg.src = apos.util.assetUrl(icons.close.src)
+            closeIconImg.alt = 'close icon'
+            closeIconImg.style = 'position: relative;'
+            Object.assign(closeIconImg.style, style.closeIcon)
+            closeButton.appendChild(closeIconImg)
+          } else if (icons.close?.type === 'svg') {
+            closeIcon.innerHTML = icons.close.src
           }
         }
       }
